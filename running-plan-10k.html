@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10K Running Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f0e;
+    --surface: #141816;
+    --card: #1a1e1b;
+    --border: #252c26;
+    --accent: #f55ab8;
+    --accent-dim: #ad2a7a;
+    --accent-glow: rgba(245,90,184,0.12);
+    --text: #e8ede9;
+    --muted: #6b7a6c;
+    --phase1: #f55ab8;
+    --phase2: #f5c842;
+    --phase3: #5ab8f5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
+
+  header {
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+  }
+
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 12vw, 108px);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  h1 span { color: var(--accent); display: block; }
+
+  .tagline {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 460px;
+    margin-bottom: 28px;
+  }
+
+  .stats-row { display: flex; gap: 32px; flex-wrap: wrap; }
+
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .overview-item {
+    background: var(--surface);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overview-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .overview-item.p1::after { background: var(--phase1); }
+  .overview-item.p2::after { background: var(--phase2); }
+  .overview-item.p3::after { background: var(--phase3); }
+
+  .overview-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .p1 .overview-num { color: var(--phase1); }
+  .p2 .overview-num { color: var(--phase2); }
+  .p3 .overview-num { color: var(--phase3); }
+
+  .overview-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+
+  .overview-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .phase { margin-bottom: 48px; }
+
+  .phase-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  .p1 .phase-num { color: var(--phase1); }
+  .p2 .phase-num { color: var(--phase2); }
+  .p3 .phase-num { color: var(--phase3); }
+
+  .phase-info { flex: 1; }
+
+  .phase-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .phase-desc {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 460px;
+  }
+
+  .weeks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .week-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .week-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+
+  .week-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .phase-1 .week-card::before { background: var(--phase1); }
+  .phase-2 .week-card::before { background: var(--phase2); }
+  .phase-3 .week-card::before { background: var(--phase3); }
+
+  .week-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .week-interval {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .phase-1 .week-interval { color: var(--phase1); }
+  .phase-2 .week-interval { color: var(--phase2); }
+  .phase-3 .week-interval { color: var(--phase3); }
+
+  .week-sessions { display: flex; flex-direction: column; gap: 4px; }
+
+  .session {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px 4px;
+    transition: background 0.15s;
+  }
+
+  .session:last-child { border-bottom: none; }
+  .session:hover { background: rgba(255,255,255,0.03); }
+
+  .session-type {
+    font-weight: 500;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .day-run {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--text);
+  }
+
+  .session.done .day-run {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .session-detail {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-top: 10px;
+  }
+
+  .badge-easy { background: rgba(245,90,184,0.1); color: var(--phase1); border: 1px solid rgba(245,90,184,0.2); }
+  .badge-mod  { background: rgba(245,200,66,0.1);  color: var(--phase2); border: 1px solid rgba(245,200,66,0.2); }
+  .badge-hard { background: rgba(90,184,245,0.1);  color: var(--phase3); border: 1px solid rgba(90,184,245,0.2); }
+  .badge-rest { background: rgba(107,122,108,0.1); color: var(--muted);  border: 1px solid rgba(107,122,108,0.2); }
+
+  /* CHECKBOXES */
+  .session-check {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    margin-right: 8px;
+  }
+
+  .session-check svg { display: none; width: 10px; height: 10px; }
+
+  .session.done .session-check { background: var(--accent); border-color: var(--accent); }
+  .session.done .session-check svg { display: block; }
+  .session.done .session-detail { opacity: 0.4; }
+
+  .week-card.all-done {
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 0 1px var(--accent-dim), inset 0 0 20px rgba(245,90,184,0.04);
+  }
+
+  .week-card.all-done .week-label::after { content: ' ✓'; color: var(--accent); }
+
+  /* TIPS */
+  .tips-section {
+    margin-top: 56px;
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .tip-icon { font-size: 22px; margin-bottom: 8px; }
+  .tip-title { font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--accent); }
+  .tip-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* PROGRESS */
+  .progress-bar-wrap { margin: 40px 0 0; }
+
+  .progress-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .prog-seg { height: 100%; }
+  .prog-seg.s1 { background: var(--phase1); width: 25%; }
+  .prog-seg.s2 { background: var(--phase2); width: 25%; }
+  .prog-seg.s3 { background: var(--phase3); width: 50%; }
+
+  .prog-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .progress-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .progress-counter span { color: var(--accent); font-weight: 500; }
+
+  @media (max-width: 560px) {
+    .overview { grid-template-columns: 1fr; }
+    .stats-row { gap: 20px; }
+    h1 { font-size: 56px; }
+    .phase-num { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header>
+    <div class="label">// 16-week continuation plan</div>
+    <h1>ROAD TO<span>10K</span></h1>
+    <p class="tagline">Building from your 5K in 45 minutes — longer runs, bigger aerobic base, first 10K finish.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-val">16</span><span class="stat-lbl">Weeks</span></div>
+      <div class="stat"><span class="stat-val">3–4</span><span class="stat-lbl">Runs / Week</span></div>
+      <div class="stat"><span class="stat-val">10K</span><span class="stat-lbl">Goal</span></div>
+      <div class="stat"><span class="stat-val">~90</span><span class="stat-lbl">Target finish (min)</span></div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-title">Plan progression</div>
+      <div class="progress-track">
+        <div class="prog-seg s1"></div>
+        <div class="prog-seg s2"></div>
+        <div class="prog-seg s3"></div>
+      </div>
+      <div class="prog-labels">
+        <span>Phase 1 — Extend (1–4)</span>
+        <span>Phase 2 — Long Runs (5–8)</span>
+        <span>Phase 3 — 10K Ready (9–16)</span>
+      </div>
+      <div class="progress-counter">Sessions completed: <span id="done-count">0</span> / <span id="total-count">0</span></div>
+    </div>
+  </header>
+
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="overview-item p1">
+      <div class="overview-num">1–4</div>
+      <div class="overview-title">Extend</div>
+      <div class="overview-sub">Weeks 1–4 · Build comfortable 30–40 min runs</div>
+    </div>
+    <div class="overview-item p2">
+      <div class="overview-num">5–8</div>
+      <div class="overview-title">Long Runs</div>
+      <div class="overview-sub">Weeks 5–8 · Introduce 40–50 min efforts</div>
+    </div>
+    <div class="overview-item p3">
+      <div class="overview-num">9–16</div>
+      <div class="overview-title">10K Ready</div>
+      <div class="overview-sub">Weeks 9–16 · Build to 70 min then race 10K</div>
+    </div>
+  </div>
+
+
+  <!-- PHASE 1 -->
+  <div class="phase phase-1">
+    <div class="phase-header p1">
+      <div class="phase-num">01</div>
+      <div class="phase-info">
+        <div class="phase-title">Extend the Base</div>
+        <div class="phase-desc">You can run 5K continuously. Now we build time on feet. Interval runs get longer to strengthen your aerobic engine, while one run per week is your 5K at easy effort — your new comfort zone.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+
+      <div class="week-card">
+        <div class="week-label">Week 01</div>
+        <div class="week-interval">8 min · 1 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">4×(8 min run / 1 min walk)<br>~36 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">3×(8 min run / 1 min walk)<br>~27 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">5K easy continuous<br>~45 min</span></div>
+        </div>
+        <span class="badge badge-easy">Easy effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 02</div>
+        <div class="week-interval">10 min · 1 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">4×(10 min run / 1 min walk)<br>~44 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">3×(10 min run / 1 min walk)<br>~33 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">5K easy continuous<br>~45 min</span></div>
+        </div>
+        <span class="badge badge-easy">Easy effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 03</div>
+        <div class="week-interval">12 min · 1 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">3×(12 min run / 1 min walk)<br>~39 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">3×(12 min run / 1 min walk)<br>~39 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">5K easy continuous<br>~45 min</span></div>
+        </div>
+        <span class="badge badge-easy">Easy effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 04 · Recovery</div>
+        <div class="week-interval">8 min · 1 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Mon <span class="day-run">Run A</span></span><span class="session-detail">3×(8 min run / 1 min walk)<br>~27 min total</span></div>
+          <div class="session"><span class="session-type">Wed <span class="day-run">Run B</span></span><span class="session-detail">3×(8 min run / 1 min walk)<br>~27 min total</span></div>
+          <div class="session"><span class="session-type">Fri <span class="day-run">Run C</span></span><span class="session-detail">8×(2 min run / 1 min walk)<br>~24 min · very easy</span></div>
+        </div>
+        <span class="badge badge-rest">Recovery week · ↓ volume</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- PHASE 2 -->
+  <div class="phase phase-2">
+    <div class="phase-header p2">
+      <div class="phase-num">02</div>
+      <div class="phase-info">
+        <div class="phase-title">Build the Long Run</div>
+        <div class="phase-desc">The long run is the cornerstone of 10K training. Intervals now use 2-minute walk breaks to let you push further. Run C becomes a dedicated longer effort each week — this is where your endurance is built.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+
+      <div class="week-card">
+        <div class="week-label">Week 05</div>
+        <div class="week-interval">15 min · 2 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">2×(15 min run / 2 min walk)<br>~34 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">2×(15 min run / 2 min walk)<br>~34 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">40 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-mod">Moderate effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 06</div>
+        <div class="week-interval">18 min · 2 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">2×(18 min run / 2 min walk)<br>~40 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">2×(15 min run / 2 min walk)<br>~34 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">45 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-mod">Moderate effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 07</div>
+        <div class="week-interval">20 min · 2 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">2×(20 min run / 2 min walk)<br>~44 min total</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">2×(18 min run / 2 min walk)<br>~40 min total</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">50 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-mod">Moderate effort</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 08 · Recovery</div>
+        <div class="week-interval">12 min · 2 min walk</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Mon <span class="day-run">Run A</span></span><span class="session-detail">2×(12 min run / 2 min walk)<br>~28 min total</span></div>
+          <div class="session"><span class="session-type">Wed <span class="day-run">Run B</span></span><span class="session-detail">30 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Fri <span class="day-run">Run C</span></span><span class="session-detail">8×(2 min run / 1 min walk)<br>~24 min · very easy</span></div>
+        </div>
+        <span class="badge badge-rest">Recovery week · ↓ volume</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- PHASE 3 -->
+  <div class="phase phase-3">
+    <div class="phase-header p3">
+      <div class="phase-num">03</div>
+      <div class="phase-info">
+        <div class="phase-title">10K Ready</div>
+        <div class="phase-desc">All runs are now continuous. The long run builds gradually from 50 to 70 minutes over 6 weeks — comfortably beyond 10K race time — with a recovery week at Week 12 and a 2-week taper to arrive at race day feeling fresh.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+
+      <div class="week-card">
+        <div class="week-label">Week 09</div>
+        <div class="week-interval">50 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">35 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">~6K easy continuous</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">50 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-hard">No walk breaks</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 10</div>
+        <div class="week-interval">55 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">38 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">~6K easy continuous</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">55 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-hard">No walk breaks</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 11 · Tel Aviv Night Run</div>
+        <div class="week-interval">58 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">40 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Wed <span class="day-run">🌙 Tel Aviv Night Run</span></span><span class="session-detail">5K race · 28th October</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run B</span></span><span class="session-detail">58 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-hard">Race week!</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 12 · Recovery</div>
+        <div class="week-interval">Easy week</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Mon <span class="day-run">Run A</span></span><span class="session-detail">35 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Wed <span class="day-run">Run B</span></span><span class="session-detail">25 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Fri <span class="day-run">Run C</span></span><span class="session-detail">8×(2 min run / 1 min walk)<br>~24 min · very easy</span></div>
+        </div>
+        <span class="badge badge-rest">Recovery week · ↓ volume</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 13</div>
+        <div class="week-interval">62 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">42 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">~7K easy continuous</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">62 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-hard">No walk breaks</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 14</div>
+        <div class="week-interval">65 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">45 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">~8K easy continuous</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">65 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-hard">No walk breaks</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 15 · Taper</div>
+        <div class="week-interval">50 min long run</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Tue <span class="day-run">Run A</span></span><span class="session-detail">30 min easy continuous</span></div>
+          <div class="session"><span class="session-type">Thu <span class="day-run">Run B</span></span><span class="session-detail">~5K easy continuous</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">Run C</span></span><span class="session-detail">50 min easy continuous</span></div>
+        </div>
+        <span class="badge badge-rest">Taper · legs getting fresh</span>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label">Week 16 · GOAL</div>
+        <div class="week-interval">10K RACE</div>
+        <div class="week-sessions">
+          <div class="session"><span class="session-type">Mon <span class="day-run">Run A</span></span><span class="session-detail">30 min easy — stay loose</span></div>
+          <div class="session"><span class="session-type">Wed <span class="day-run">Run B</span></span><span class="session-detail">6×(2 min run / 1 min walk)<br>~18 min · shake out</span></div>
+          <div class="session"><span class="session-type">Sat <span class="day-run">🏁 Race Day</span></span><span class="session-detail">10K — you've got this!</span></div>
+        </div>
+        <span class="badge badge-hard">🎉 Goal achieved</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- TIPS -->
+  <div class="tips-section">
+    <div class="label">// Key principles for 10K</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🐢</div>
+        <div class="tip-title">Long runs stay slow</div>
+        <div class="tip-body">Your Sunday long run should be slower than your 5K pace. Comfortable enough to hold a full conversation the whole way.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📈</div>
+        <div class="tip-title">10% rule</div>
+        <div class="tip-body">Weekly mileage shouldn't jump more than ~10% at a time. The recovery weeks are non-negotiable — don't skip them.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔁</div>
+        <div class="tip-title">Repeat if needed</div>
+        <div class="tip-body">If a week felt like a struggle, repeat it. Consistency over weeks matters far more than rushing to the next step.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💧</div>
+        <div class="tip-title">Fuel on longer runs</div>
+        <div class="tip-body">Once your long run passes 60 minutes, consider taking water and a small amount of carbohydrate (a gel or a banana) during the run.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">😴</div>
+        <div class="tip-title">Sleep is training</div>
+        <div class="tip-body">Aerobic adaptation happens during sleep. Prioritise 7–9 hours in the nights after your harder sessions.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🏁</div>
+        <div class="tip-title">Race day pacing</div>
+        <div class="tip-body">Start slower than you think you need to. The first 3K should feel easy. You'll have plenty left for the second half.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  const CHECK_SVG = `<svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#0d0f0e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  document.querySelectorAll('.session').forEach((session) => {
+    const card = session.closest('.week-card');
+    const weekLabel = card.querySelector('.week-label').textContent.trim().replace(/\s+/g, '-');
+    const sessionType = (session.querySelector('.day-run') || session.querySelector('.session-type')).textContent.trim().replace(/\s+/g, '-');
+    const id = `10k-run-${weekLabel}-${sessionType}`;
+    session.dataset.id = id;
+
+    const box = document.createElement('div');
+    box.className = 'session-check';
+    box.innerHTML = CHECK_SVG;
+    session.insertBefore(box, session.firstChild);
+
+    if (localStorage.getItem(id) === 'done') {
+      session.classList.add('done');
+    }
+
+    session.addEventListener('click', () => {
+      const isDone = session.classList.toggle('done');
+      localStorage.setItem(id, isDone ? 'done' : '');
+      updateCounts();
+      checkWeekComplete(card);
+    });
+  });
+
+  function checkWeekComplete(card) {
+    const sessions = card.querySelectorAll('.session');
+    const allDone = [...sessions].every(s => s.classList.contains('done'));
+    card.classList.toggle('all-done', allDone);
+  }
+
+  function updateCounts() {
+    const all = document.querySelectorAll('.session');
+    const done = document.querySelectorAll('.session.done');
+    document.getElementById('total-count').textContent = all.length;
+    document.getElementById('done-count').textContent = done.length;
+  }
+
+  document.querySelectorAll('.week-card').forEach(checkWeekComplete);
+  updateCounts();
+</script>
+</body>
+</html>
